@@ -1,75 +1,77 @@
 #include "sort.h"
 
 /**
- * quick_sort - sorts an array in ascending order using quick sort algorithm
- *		with Lomuto partition scheme
+ * partition - partitions the array by selecting the last element as pivot
+ * @array: an unsorted array
+ * @low: lowest index of partition to be sort
+ * @high: highest index of partition to be sorted
+ * @size: size of the unsorted array
  *
- * @array: The array to be sorted
- * @size: The size of the array
- */
-void quick_sort(int *array, size_t size)
-{
-	if (size < 2)
-		return;
-
-	quicksort_recursive(array, 0, size - 1);
-}
-
-/**
- * quicksort_recursive - Recursive function that performs the quick sort
- * @array: the array to be sorted
- * @low: The lower index of the partition
- * @high: the upper index of the partition
+ * Return: index of the partitioned element
  */
 
-void quicksort_recursive(int *array, int low, int high)
+int partition(int *array, int low, int high, size_t size)
 {
-	int pivot_idx;
+	int swap, pivot, i, j;
 
-	if (low < high)
+	pivot = array[high];
+	i = low - 1;
+
+	for (j = low; j < high; j++)
 	{
-		pivot_idx = partition(array, low, high);
-
-		quicksort_recursive(array, low, pivot_idx - 1);
-		quicksort_recursive(array, pivot_idx + 1, high);
-	}
-}
-
-/**
- * partition - partitions the array and places the pivot in the correct pos
- * @array: The array to be partitioned
- * @low: The lower index of the partition
- * @high: The higher index of the partition
- *
- * Return: Pivot index
- */
-
-int partition(int *array, int low, int high)
-{
-	int pivot = array[high];
-	int i = low - 1;
-	int j, temp;
-
-	for (j = low; j <= high - 1; j++)
-	{
-		if (array[j] <= pivot)
+		if (array[j] < pivot)
 		{
 			i++;
 			if (i != j)
 			{
-				temp = array[i];
+				swap = array[i];
 				array[i] = array[j];
-				array[j] = temp;
-				print_array(array, high + 1);
+				array[j] = swap;
+				print_array(array, size);
 			}
 		}
 	}
-	if (i + 1 != high)
+	if (array[high] < array[i + 1])
 	{
-		temp = array[i + 1];
+		swap = array[i + 1];
 		array[i + 1] = array[high];
-		array[high] = temp;
-		print_array(array, high + 1);
+		array[high] = swap;
+		print_array(array, size);
 	}
 	return (i + 1);
+}
+
+/**
+ * quicksort - sorts partitions of the integer array
+ * @array: array to be sorted
+ * @low: lowest index of the partition to be sorted
+ * @high: highest index of the partition to sort
+ * @size: size of the array
+ */
+
+void quicksort(int *array, int low, int high, size_t size)
+{
+	int pivot;
+
+	if (low < high)
+	{
+		pivot = partition(array, low, high, size);
+
+		quicksort(array, low, pivot - 1, size);
+		quicksort(array, pivot + 1, high, size);
+	}
+}
+
+/**
+ * quick_sort - sorts an array of integers using quick sort algo
+ * @array: unsorted array to be sorted
+ * @size: size of the array
+ */
+
+void quick_sort(int *array, size_t size)
+{
+	if (array == NULL || size < 2)
+		return;
+
+	quicksort(array, 0, size - 1, size);
 }
